@@ -1,0 +1,39 @@
+movie-db:
+  movie:
+    url: https://www.themoviedb.org/movie?page=%s
+    css:
+      selector:
+        page-number: page_%s
+        card: card style_1
+        title: div.content > h2 > a
+        image: div.image > div.wrapper > a > img
+      attribute:
+        title: title
+        image: src
+
+spring:
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: movie_group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: com.matters.crawler.moviedb
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    template:
+      default-topic: movie
+  jpa:
+    database-platform: com.matters.moviedb.sqlite.SQLDialect
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:sqlite:identifier.sqlite
+    driver-class-name: org.sqlite.JDBC
